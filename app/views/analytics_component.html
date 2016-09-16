@@ -3,14 +3,66 @@
         <div class="search">
             <form>
                 <input type="text" class="is-input" ng-model="$ctrl.url" placeholder="Type a website URL">
-                <button class="is-btn is-btn--search">Analyse</button>
+                <button class="is-btn is-btn--search" ng-click="$ctrl.getAnalytics()">Analyse</button>
             </form>
         </div>
-        <div class="results">
+        <div class="spinner" ng-if="$ctrl.showSpinner">
+            <div class="cube1"></div>
+            <div class="cube2"></div>
+        </div>
+        <div class="results" ng-if="$ctrl.showResults">
             <div class="results__header">
-
+                <h4>Analytics Results</h4>
             </div>
             <div class="results__details">
+                <div class="row results__item">
+                    <div class="col-xs-4 details__title">
+                        <span>HTML Version</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        {{$ctrl.analytics.htmlVersion}}
+                    </div>
+                </div>
+                <div class="row results__item odd">
+                    <div class="col-xs-4 details__title">
+                        <span>Page Title</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        {{$ctrl.analytics.title}}
+                    </div>
+                </div>
+                <div class="row results__item">
+                    <div class="col-xs-4 details__title">
+                        <span>Headings</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        {{$ctrl.analytics.headings}}
+                    </div>
+                </div>
+                <div class="row results__item odd">
+                    <div class="col-xs-4 details__title">
+                        <span>Internal Links</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        {{$ctrl.analytics.links.internal}}
+                    </div>
+                </div>
+                <div class="row results__item">
+                    <div class="col-xs-4 details__title">
+                        <span>External Links</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        {{$ctrl.analytics.links.external}}
+                    </div>
+                </div>
+                <div class="row results__item odd">
+                    <div class="col-xs-4 details__title">
+                        <span>Has login form?</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        {{$ctrl.analytics.loginForm}}
+                    </div>
+                </div>
 
             </div>
         </div>

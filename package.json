@@ -10,7 +10,7 @@
     "prestart": "npm install"
   },
   "engines": {
-    "node": "5.4.0"
+    "node": "6.0.0"
   },
   "keywords": [
     "scout24 analytics spa"
@@ -44,6 +44,7 @@
     "gulp-watch": "^4.3.5",
     "hapi": "^15.0.3",
     "inert": "^4.0.2",
+    "lodash": "^4.15.0",
     "request": "^2.74.0",
     "require-dir": "^0.3.0",
     "run-sequence": "^1.1.4",

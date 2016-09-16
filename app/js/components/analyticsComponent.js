@@ -1,12 +1,13 @@
 function AnalyticsController(ApiService, $log) {
     var $ctrl = this;
 
-    $ctrl.url = '';
+    $ctrl.url = 'www.uol.com.br';
     $ctrl.rejectedURL = '';
     $ctrl.showSpinner = false;
-    $ctrl.summary = {};
+    $ctrl.analytics = {};
 
     $ctrl.getAnalytics = function(){
+        $ctrl.showSpinner = true;
         $ctrl.showResults = false;
         if ($ctrl.url) {
             $ctrl.showSpinner = true;
@@ -15,10 +16,13 @@ function AnalyticsController(ApiService, $log) {
     };
 
 
-    function handleSuccess(designResponse) {
-
+    function handleSuccess(analyticsResponse) {
+        $ctrl.showSpinner = false;
+        $ctrl.showResults = true;
+        $ctrl.analytics = analyticsResponse;
     }
     function handleError(errorResponse) {
+        $ctrl.showSpinner = false;
         $log.debug(errorResponse);
     }
 
