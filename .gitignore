@@ -1,0 +1,10 @@
+.DS_Store
+node_modules
+.tmp
+.sass-cache
+.idea
+.idea/workspace.xml
+public
+bower_components
+app/temp
+npm-debug.log

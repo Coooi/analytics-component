@@ -1,0 +1,54 @@
+{
+  "name": "scout24-analytics",
+  "version": "1.0.0",
+  "description": "Scout24 Analytics Assessment.",
+  "main": "server.js",
+  "devDependencies": {},
+  "scripts": {
+    "start": "forever --spinSleepTime=1000 --minUptime=1000  server.js",
+    "postinstall": "bower cache clean && bower install && gulp build",
+    "prestart": "npm install"
+  },
+  "engines": {
+    "node": "5.4.0"
+  },
+  "keywords": [
+    "scout24 analytics spa"
+  ],
+  "author": "Marco Nascimento",
+  "license": "scout24",
+  "dependencies": {
+    "bootstrap-grid": "^2.0.1",
+    "bower": "^1.7.7",
+    "cheerio": "^0.22.0",
+    "forever": "^0.15.1",
+    "good": "^7.0.2",
+    "good-console": "^6.1.2",
+    "good-squeeze": "^5.0.0",
+    "gulp": "^3.9.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-concat-vendor": "0.0.4",
+    "gulp-flatten": "^0.3.0",
+    "gulp-imagemin": "^2.3.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-minify-css": "^1.2.1",
+    "gulp-ng-annotate": "^2.0.0",
+    "gulp-nodemon": "^2.0.4",
+    "gulp-notify": "^2.2.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.0.4",
+    "gulp-uglify": "^1.4.1",
+    "gulp-util": "^3.0.6",
+    "gulp-watch": "^4.3.5",
+    "hapi": "^15.0.3",
+    "inert": "^4.0.2",
+    "request": "^2.74.0",
+    "require-dir": "^0.3.0",
+    "run-sequence": "^1.1.4",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.4.0",
+    "winston": "^2.1.1"
+  }
+}

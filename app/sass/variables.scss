@@ -1,0 +1,84 @@
+/* COLORS */
+$shock-green: rgb(58, 101,78);
+
+/* Screen Sizes */
+$large_devices: "min-width : 1200px";
+$medium_devices: "(min-width : 768px) and (max-width : 1200px)";
+$small_devices: "(min-width : 480px) and (max-width : 768px)";
+$extra_small_devices: "max-width : 480px";
+$tablet_devices: "(min-width : 767px) and (max-width : 1200px)";
+
+/*** Global ***/
+// Media Query Ranges
+$extra-small-screen: 480px !default;
+$small-screen-up: 601px !default;
+$medium-screen-up: 769px !default;
+$medium-screen-down: 768px !default;
+$max-width-nav-bar: 863px !default;
+$large-screen-up: 1201px !default;
+$small-screen: 600px !default;
+$medium-screen: 992px !default;
+$large-screen: 1200px !default;
+
+
+$large-1201-up: "only screen and (min-width : #{$large-screen-up})" !default;
+$max-nav-bar-and-down: "only screen and (max-width : #{$max-width-nav-bar})" !default;
+$large-and-up: "only screen and (min-width : #{$medium-screen-up})" !default;
+$medium-only: "only screen and (min-width : #{$small-screen-up}) and (max-width : #{$medium-screen})" !default;
+$medium-and-up: "only screen and (min-width : #{$medium-screen-up})" !default;
+$medium-and-down: "only screen and (max-width : #{$medium-screen-down})" !default;
+$small-and-down: "only screen and (max-width : #{$small-screen})" !default;
+$extra-small-and-down: "only screen and (max-width : #{$extra-small-screen})" !default;
+
+
+/* Container Sizes */
+$container_size_large: 1140px;
+
+/* Typography */
+$thin: 100;
+$regular: 200;
+$normal: 300;
+$medium: 400;
+$semi-bold: 500;
+$bold: 500;
+
+/* Font Sizes */
+$xxlarge_size: 144px;
+$xlarge_size: 72px;
+$large_size: 48px;
+$normal_size: 36px;
+$small_size: 24px;
+$xsmall_size: 20px;
+$xxsmall_size: 14px;
+
+/* Transitions */
+$fast_transition: 0.2s;
+$default_transition: 0.4s;
+$slow_transition: 0.8s;
+
+/* Vertical Margins */
+$default_margin_size: 10px;
+$xsmall_margin: $default_margin_size; //10px
+$small_margin: $default_margin_size*2; //20px
+$default_margin: $default_margin_size*4; //40px
+$large_margin: $default_margin_size*8; //80px
+$xlarge_margin: $default_margin_size*16; //160px
+
+/* Horizontal Paddings */
+$xsmall_padding_percent: 5%;
+$xsmall_padding: 10px;
+$small_padding_percent: 10%;
+$small_padding: 20px;
+$default_padding_percent: 20%;
+$default_padding: 40px;
+$large_padding_percent: 25%;
+$large_padding: 80px;
+$xlarge_padding: 160px;
+
+/* Colors */
+$white: #FFF;
+$black: #000;
+
+/** SS - Colors **/
+$ss-color: #00b2a5;
+$ss-light-color: #d3f1f1;

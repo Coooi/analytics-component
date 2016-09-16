@@ -1,0 +1,94 @@
+@import 'variables';
+@import 'mixins';
+/*********************
+  Media Query Classes
+**********************/
+.hide-on-small-only, .hide-on-small-and-down {
+  @media #{$small-and-down} {
+    display: none !important;
+  }
+}
+.hide-on-med-and-down {
+  @media #{$medium-and-down} {
+    display: none !important;
+  }
+}
+.hide-on-med-and-up {
+  @media #{$medium-and-up} {
+    display: none !important;
+  }
+}
+.hide-logo-max-navbar-and-down {
+  @media only screen and (max-width : 863px) {
+    display: none !important;
+  }
+}
+.hide-navbar-and-up {
+  @media only screen and (min-width: 864px) {
+    display: none !important;
+  }
+}
+.hide-on-med-only {
+  @media only screen and (min-width: $small-screen) and (max-width: $medium-screen) {
+    display: none !important;
+  }
+}
+.hide-on-large-only {
+  @media #{$large-and-up} {
+    display: none !important;
+  }
+}
+.show-on-large {
+  @media #{$large-and-up} {
+    display: initial !important;
+  }
+}
+.show-on-medium {
+  @media only screen and (min-width: $small-screen) and (max-width: $medium-screen) {
+    display: initial !important;
+  }
+}
+.show-on-small {
+  @media #{$small-and-down} {
+    display: initial !important;
+  }
+}
+.show-on-medium-and-up {
+  @media #{$medium-and-up} {
+    display: initial !important;
+  }
+}
+.show-on-medium-and-down {
+  @media #{$medium-and-down} {
+    display: initial !important;
+  }
+}
+
+.hide-on-830-and-down {
+  @media only screen and (max-width: 830px) {
+    display: none !important;
+  }
+}
+.hide-on-830-and-up {
+  @media only screen and (min-width: 831px) {
+    display: none !important;
+  }
+}
+.hide-on-992-and-down {
+  @media only screen and (max-width: 992px) {
+    display: none !important;
+  }
+}
+.hide-on-1120-and-down {
+  @media only screen and (max-width: 1120px) {
+    display: none !important;
+  }
+}
+.hide-on-1344-and-down {
+  @media only screen and (max-width: 1344px) {
+    display: none !important;
+  }
+}
+.hidden {
+  display: none !important;
+}
