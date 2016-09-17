@@ -11,29 +11,48 @@
 #analytics-component {
   background-color: #f2f2f2;
   border: 1px solid $is-gray;
-  border-radius: 2px;
+  border-radius: 3px;
   padding: $xsmall_padding $default_padding;
   text-align: center;
+  @media #{$small_and-down} {
+    padding: $xsmall_padding;
+  }
   .search {
     width: 100%;
     form {
       display: flex;
       justify-content: center;
       -webkit-justify-content: center;
+      label {
+        color: #b1b1b1;
+        font-weight: 300;
+      }
     }
   }
   .results {
+    margin-top: $default_margin;
     .results__header {
-
+      background-color: $is-blue;
+      border-radius: 3px 3px 0 0;
+      padding: 10px;
+      h4 {
+        margin: 0;
+        color: white;
+        font-size: $body_size;
+        font-weight: $normal;
+        @media #{$small_and-down} {
+          font-size: $xxsmall_size;
+        }
+      }
     }
     .results__details {
       background-color: $white;
-
-      border-radius: 2px;
+      border-radius: 3px;
 
       .results__item {
         padding: $xsmall_padding;
         border-bottom: 1px solid $is-gray;
+        font-size: $body_size;
         &.odd {
           background-color: rgba(255, 117, 0, 0.1);
         }
@@ -41,13 +60,26 @@
           padding: 0;
           text-align: left;
           border-right: 1px solid $is-gray;
+          @media #{$small_and-down} {
+            font-size: $xxsmall_size;
+          }
         }
         .details__value {
           padding: 0 0 0 $xsmall_padding;
           text-align: left;
+          @media #{$small_and-down} {
+            font-size: $xxsmall_size;
+          }
         }
       }
     }
+  }
+}
+.error-box {
+  margin-top: $default_margin;
+  p {
+    font-weight: $medium;
+    color: darkred;
   }
 }
 .is-input {
@@ -55,15 +87,17 @@
   padding: 0 .7142em;
   font-family: 'Open Sans',Verdana,'DejaVu Sans',Arial,Helvetica,sans-serif;
   background-color: $white;
-  border-radius: 2px;
+  border-radius: 3px;
   outline: 0;
   margin: 0;
   box-sizing: border-box;
   height: 36px;
   max-width: 300px;
-  min-width: 150px;
-  width: 60%;
+  min-width: 165px;
   font-size: $xxsmall_size;
+  @media #{$medium-and-up} {
+    width: 300px;
+  }
 }
 .is-btn {
   margin: 0;
@@ -79,6 +113,9 @@
   white-space: nowrap;
   cursor: pointer;
   text-decoration: none;
+  @media #{$small_and-down} {
+    padding: 0 4px;
+  }
 }
 .is-btn.is-btn--search {
   border-radius: 0px 3px 3px 0;
@@ -88,6 +125,9 @@
   font-weight: 400;
   font-size: 14px;
   margin-left: -1px;
+  @media #{$small_and-down} {
+    font-size: 12px;
+  }
 }
 
 .render-design.ng-move,

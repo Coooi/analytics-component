@@ -2,13 +2,18 @@
     <div id="analytics-component">
         <div class="search">
             <form>
-                <input type="text" class="is-input" ng-model="$ctrl.url" placeholder="Type a website URL">
+                <label for="search-input">http://
+                    <input type="text" name="search-input" class="is-input" ng-model="$ctrl.url" placeholder="Type a website URL" required>
+                </label>
                 <button class="is-btn is-btn--search" ng-click="$ctrl.getAnalytics()">Analyse</button>
             </form>
         </div>
         <div class="spinner" ng-if="$ctrl.showSpinner">
             <div class="cube1"></div>
             <div class="cube2"></div>
+        </div>
+        <div class="error-box" ng-if="$ctrl.errorMsg">
+            <p>{{$ctrl.errorMsg}}</p>
         </div>
         <div class="results" ng-if="$ctrl.showResults">
             <div class="results__header">
@@ -20,7 +25,7 @@
                         <span>HTML Version</span>
                     </div>
                     <div class="col-xs-6 details__value">
-                        {{$ctrl.analytics.htmlVersion}}
+                        <span>{{$ctrl.analytics.htmlVersion}}</span>
                     </div>
                 </div>
                 <div class="row results__item odd">
@@ -28,7 +33,7 @@
                         <span>Page Title</span>
                     </div>
                     <div class="col-xs-6 details__value">
-                        {{$ctrl.analytics.title}}
+                        <span>{{$ctrl.analytics.title}}</span>
                     </div>
                 </div>
                 <div class="row results__item">
@@ -36,7 +41,55 @@
                         <span>Headings</span>
                     </div>
                     <div class="col-xs-6 details__value">
-                        {{$ctrl.analytics.headings}}
+                        <span>{{$ctrl.analytics.headings.count}}</span>
+                    </div>
+                </div>
+                <div class="row results__item odd">
+                    <div class="col-xs-4 details__title">
+                        <span>H1</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        <span>{{$ctrl.analytics.headings.h1}}</span>
+                    </div>
+                </div>
+                <div class="row results__item">
+                    <div class="col-xs-4 details__title">
+                        <span>H2</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        <span>{{$ctrl.analytics.headings.h2}}</span>
+                    </div>
+                </div>
+                <div class="row results__item odd">
+                    <div class="col-xs-4 details__title">
+                        <span>H3</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        <span>{{$ctrl.analytics.headings.h3}}</span>
+                    </div>
+                </div>
+                <div class="row results__item">
+                    <div class="col-xs-4 details__title">
+                        <span>H4</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        <span>{{$ctrl.analytics.headings.h4}}</span>
+                    </div>
+                </div>
+                <div class="row results__item odd">
+                    <div class="col-xs-4 details__title">
+                        <span>H5</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        <span>{{$ctrl.analytics.headings.h5}}</span>
+                    </div>
+                </div>
+                <div class="row results__item">
+                    <div class="col-xs-4 details__title">
+                        <span>H6</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        <span>{{$ctrl.analytics.headings.h6}}</span>
                     </div>
                 </div>
                 <div class="row results__item odd">
@@ -44,7 +97,7 @@
                         <span>Internal Links</span>
                     </div>
                     <div class="col-xs-6 details__value">
-                        {{$ctrl.analytics.links.internal}}
+                        <span>{{$ctrl.analytics.links.internal}}</span>
                     </div>
                 </div>
                 <div class="row results__item">
@@ -52,7 +105,23 @@
                         <span>External Links</span>
                     </div>
                     <div class="col-xs-6 details__value">
-                        {{$ctrl.analytics.links.external}}
+                        <span>{{$ctrl.analytics.links.external}}</span>
+                    </div>
+                </div>
+                <div class="row results__item odd">
+                    <div class="col-xs-4 details__title">
+                        <span>Accessible Links</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        <span>{{$ctrl.analytics.links.accessible}}</span>
+                    </div>
+                </div>
+                <div class="row results__item">
+                    <div class="col-xs-4 details__title">
+                        <span>Inaccessible / timed out Links</span>
+                    </div>
+                    <div class="col-xs-6 details__value">
+                        <span>{{$ctrl.analytics.links.inaccessible}}</span>
                     </div>
                 </div>
                 <div class="row results__item odd">
@@ -60,7 +129,7 @@
                         <span>Has login form?</span>
                     </div>
                     <div class="col-xs-6 details__value">
-                        {{$ctrl.analytics.loginForm}}
+                        <span>{{$ctrl.analytics.loginForm | yes_no}}</span>
                     </div>
                 </div>
 

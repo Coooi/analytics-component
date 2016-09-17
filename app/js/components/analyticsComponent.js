@@ -1,20 +1,20 @@
 function AnalyticsController(ApiService, $log) {
     var $ctrl = this;
 
-    $ctrl.url = 'www.uol.com.br';
-    $ctrl.rejectedURL = '';
+    $ctrl.url = '';
+    $ctrl.errorMsg = '';
     $ctrl.showSpinner = false;
     $ctrl.analytics = {};
 
     $ctrl.getAnalytics = function(){
-        $ctrl.showSpinner = true;
-        $ctrl.showResults = false;
         if ($ctrl.url) {
             $ctrl.showSpinner = true;
+            $ctrl.showSpinner = true;
+            $ctrl.showResults = false;
+            $ctrl.errorMsg = '';
             ApiService.getAnalyticsByURL($ctrl.url).then(handleSuccess, handleError);
         }
     };
-
 
     function handleSuccess(analyticsResponse) {
         $ctrl.showSpinner = false;
@@ -23,6 +23,9 @@ function AnalyticsController(ApiService, $log) {
     }
     function handleError(errorResponse) {
         $ctrl.showSpinner = false;
+        if (errorResponse.data) {
+            $ctrl.errorMsg = errorResponse.data.message;
+        }
         $log.debug(errorResponse);
     }
 
