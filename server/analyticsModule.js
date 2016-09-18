@@ -1,8 +1,8 @@
-const request   = require('request');
-const URL       = require('url');
-const _         = require('lodash');
-const rp        = require('request-promise');
-const cheerio   = require('cheerio');
+const Request       = require('request');
+const URL           = require('url');
+const _             = require('lodash');
+const RP            = require('request-promise');
+const Cheerio       = require('cheerio');
 
 let initAnalytics = (server, req, reply) => {
 
@@ -18,7 +18,7 @@ let initAnalytics = (server, req, reply) => {
     const url_hostname = parsed_url.hostname;
 
 
-    request({
+    Request({
         uri: url_href,
         timeout: 30000,
         followRedirect: true,
@@ -38,51 +38,21 @@ let initAnalytics = (server, req, reply) => {
         }
 
         if (!error) {
-            const $ = cheerio.load(html),
+
+            const $ = Cheerio.load(html),
                 EXTERNAL_LINK_REGEX = /(https?:)?\/\/((?:[\w\d]+\.)+[\w\d]{2,})/,
                 INTERNAL_LINK_REGEX = /^(\/[\w]*)*/;
+
             let analytics = {},
                 links = {},
-                linksToBeVerified = 0;
+                currentLinkIndex = 0,
+                websiteLinks = [],
+                LINKS_LENGTH = 0,
+                linksToBeVerified = 0,
+                uniqueRequest = true;
 
-            let successResponse = () => {
+            let respond = () => {
                 reply(analytics).code(200);
-            };
-
-            let verifyAccessibility = (href) => {
-                let testUrl = url_href;
-                let matches = INTERNAL_LINK_REGEX.exec(href);
-                if (matches && matches[0] && matches[0].startsWith('/')) {
-                    testUrl += href.substring(1, href.length);
-                } else {
-                    testUrl = href;
-                }
-                const options = {
-                    uri: testUrl,
-                    timeout: 20000,
-                    followRedirect: true,
-                    maxRedirects: 20
-                };
-
-                rp(options)
-                    .then(function () {
-                        linksToBeVerified--;
-                        links.accessible++;
-                        server.log('info', `Links left: ${linksToBeVerified}. Verifying URL: ${href}`);
-                        if (linksToBeVerified === 0) {
-                            analytics.links = links;
-                            successResponse();
-                        }
-                    })
-                    .catch(function () {
-                        linksToBeVerified--;
-                        links.inaccessible++;
-                        server.log('info', `Links left: ${linksToBeVerified}. Verifying URL: ${testUrl}`);
-                        if (linksToBeVerified === 0) {
-                            analytics.links = links;
-                            successResponse();
-                        }
-                    });
             };
 
             let isInternalLink = (href) => {
@@ -105,24 +75,58 @@ let initAnalytics = (server, req, reply) => {
                 return isExternalLink;
             };
 
-            let validateLinks = (hrefs) => {
-                linksToBeVerified = _.size(hrefs);
+            let verifyAccessibility = () => {
+                let testUrl = url_href;
+                let href = websiteLinks[currentLinkIndex];
+                let matches = INTERNAL_LINK_REGEX.exec(href);
+                if (matches && matches[0] && matches[0].startsWith('/')) {
+                    testUrl += href.substring(1, href.length);
+                } else {
+                    testUrl = href;
+                }
+                const options = {
+                    uri: testUrl,
+                    timeout: 20000,
+                    followRedirect: true,
+                    maxRedirects: 15
+                };
+
+                if (href && isInternalLink(href) || href==='') {
+                    links.internal++;
+                } else if (isExternalLink(href)) {
+                    links.external++;
+                }
+                RP(options)
+                    .then(function () {
+                        validURLCallback();
+                    })
+                    .catch(function () {
+                        timedoutURLCallback();
+                    });
+            };
+
+            function checkNextLink(){
+                if (currentLinkIndex >= (LINKS_LENGTH-1)) {
+                    analytics.links = links;
+                    respond();
+                } else {
+                    verifyAccessibility();
+                }
+            }
+
+            let validateLinks = () => {
+                linksToBeVerified = _.size(websiteLinks);
+                LINKS_LENGTH = linksToBeVerified;
                 links.external = 0;
                 links.internal = 0;
                 links.accessible = 0;
                 links.inaccessible = 0;
-
-                _.forEach(hrefs, (href) => {
-                    console.log(`HREF=${href}`);
-                    if (href && isInternalLink(href) || href==='') {
-                        links.internal++;
-                    } else if (isExternalLink(href)) {
-                        links.external++;
-                    }
-                    verifyAccessibility(href);
-                });
-
-                return links;
+                if (linksToBeVerified > 0) {
+                    verifyAccessibility();
+                } else {
+                    analytics.links = links;
+                    respond();
+                }
             };
 
             let countHeadings = (node) => {
@@ -139,17 +143,39 @@ let initAnalytics = (server, req, reply) => {
                 return headings;
             };
 
+            function validURLCallback(){
+                currentLinkIndex++;
+                links.accessible++;
+                linksToBeVerified--;
+                server.log('info', `Links left: ${linksToBeVerified}. Verifying URL: ${websiteLinks[currentLinkIndex]}`);
+                checkNextLink();
+            }
+
+            function timedoutURLCallback(){
+                currentLinkIndex++;
+                links.inaccessible++;
+                linksToBeVerified--;
+                server.log('info', `Links left: ${linksToBeVerified}. Verifying URL: ${websiteLinks[currentLinkIndex]}`);
+                checkNextLink();
+            }
+
+            analytics.htmlVersion = 'HTML4';
+            $('<!DOCTYPE html>').filter(function () {
+                analytics.htmlVersion = 'HTML5';
+            });
             $('html').filter(function () {
-                let data = $(this),
-                    allHREFs = data.find('a').map((i, el) => {
+                if (uniqueRequest) {
+                    uniqueRequest = false;
+                    let data = $(this);
+                    websiteLinks = data.find('a').map((i, el) => {
                         return $(el).attr('href');
                     });
 
-                analytics.htmlVersion = 'HTML5';
-                analytics.title = data.find('title').text();
-                analytics.headings = countHeadings(data);
-                analytics.loginForm = data.find('form input[type="password"]').length > 0;
-                validateLinks(allHREFs);
+                    analytics.title = data.find('title').text();
+                    analytics.headings = countHeadings(data);
+                    analytics.loginForm = data.find('form input[type="password"]').length > 0;
+                    validateLinks();
+                }
             });
         }
     })
