@@ -129,6 +129,12 @@
     font-size: 12px;
   }
 }
+#history-info {
+  margin-bottom: $xsmall_margin;
+  span {
+    font-size: $xxxsmall_size;
+  }
+}
 
 .render-design.ng-move,
 .render-design.ng-enter,

@@ -16,6 +16,9 @@
             <p>{{$ctrl.errorMsg}}</p>
         </div>
         <div class="results" ng-if="$ctrl.showResults">
+            <div id="history-info">
+                <span>Results computed on {{$ctrl.analytics.created_at | date:"yyyy-MM-dd 'at' h:mma"}}.</span>
+            </div>
             <div class="results__header">
                 <h4>Analytics Results</h4>
             </div>
@@ -126,7 +129,7 @@
                 </div>
                 <div class="row results__item odd">
                     <div class="col-xs-4 details__title">
-                        <span>Has login form?</span>
+                        <span>Login form</span>
                     </div>
                     <div class="col-xs-6 details__value">
                         <span>{{$ctrl.analytics.loginForm | yes_no}}</span>

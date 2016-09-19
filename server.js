@@ -4,8 +4,17 @@ const Hapi      = require('hapi');
 const Good      = require('good');
 const server    = new Hapi.Server();
 const analytics = require('./server/analyticsModule');
+const mongojs   = require('mongojs');
 
 server.connection({port: 3000});
+
+//DB Connection
+const DB_URI =
+    process.env.MONGOLAB_URI ||
+    process.env.MONGOHQ_URL ||
+    'mongodb://localhost/analyticsdb';
+
+server.app.db = mongojs(DB_URI, ['history']);
 
 server.register(require('inert'), (err) => {
 

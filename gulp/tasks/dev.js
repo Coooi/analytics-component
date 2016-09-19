@@ -14,5 +14,5 @@ gulp.task('watch', function () {
 });
 
 gulp.task('run', function (cb) {
-  runSequence('build', 'watch', 'nodemon', cb);
+  runSequence('build', 'watch', 'nodemon', 'mongod', cb);
 });
