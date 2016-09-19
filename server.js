@@ -37,6 +37,12 @@ server.register(require('inert'), (err) => {
 server.route({
     method: 'GET',
     path: '/analytics/{url}',
+    config: {
+        timeout: {
+            server: 330000,
+            socket: 330001
+        }
+    },
     handler: (req, reply) => {
         analytics.initAnalytics(server, req, reply);
     }

@@ -23,8 +23,10 @@ function AnalyticsController(ApiService, $log) {
     }
     function handleError(errorResponse) {
         $ctrl.showSpinner = false;
-        if (errorResponse.data) {
+        if (errorResponse.data.message) {
             $ctrl.errorMsg = errorResponse.data.message;
+        } else if (errorResponse.data.error) {
+            $ctrl.errorMsg = 'Request timeout. This website has too many links, please try another one.';
         }
         $log.debug(errorResponse);
     }

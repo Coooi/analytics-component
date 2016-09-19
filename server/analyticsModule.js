@@ -18,6 +18,12 @@ let initAnalytics = (server, req, reply) => {
     const url_href = parsed_url.href;
     const url_hostname = parsed_url.hostname;
 
+    let timeout = false;
+
+    setTimeout(function () {
+        timeout = true;
+    }, 300000);
+
     db.on('error', function() {
         server.log('error', 'Connection to the database has failed. Please make sure you have mongo running.');
     });
@@ -53,7 +59,7 @@ let initAnalytics = (server, req, reply) => {
                     errorResponse.code = 404;
                 }
                 server.log('error', errorResponse.message);
-                reply(errorResponse).code(errorResponse.code);
+                return reply(errorResponse).code(errorResponse.code);
             }
 
             if (!error) {
@@ -71,7 +77,12 @@ let initAnalytics = (server, req, reply) => {
                     uniqueRequest = true;
 
                 let respond = () => {
-                    reply(analytics).code(200);
+                    return reply(analytics).code(200);
+                };
+                let replyTimeout = () => {
+                    errorResponse.message = `The URL ${url_href} timed out, please try again later.`;
+                    errorResponse.code = 504;
+                    return reply(errorResponse).code(504);
                 };
 
                 let updateHistory = function() {
@@ -133,10 +144,18 @@ let initAnalytics = (server, req, reply) => {
                     }
                     RP(options)
                         .then(function () {
-                            validURLCallback();
+                            if (!timeout) {
+                                validURLCallback();
+                            } else {
+                                replyTimeout();
+                            }
                         })
                         .catch(function () {
-                            timedoutURLCallback();
+                            if (!timeout) {
+                                timedoutURLCallback();
+                            } else {
+                                replyTimeout();
+                            }
                         });
                 };
 

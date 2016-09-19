@@ -62,6 +62,8 @@ gulp run
 ### Notes ###
 
 * No unit tests included.
+* The timeout of each request is 5 minutes.
+* The timeout of each link validation is 20 seconds.
 
 ### Contact ###
 
