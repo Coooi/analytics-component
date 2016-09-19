@@ -4,6 +4,34 @@ const _             = require('lodash');
 const RP            = require('request-promise');
 const Cheerio       = require('cheerio');
 
+let getUpdatedAnalytics = (server,req,reply) => {
+
+    let url = req.params.url,
+        errorResponse = {};
+
+    if (url.indexOf('http:') === -1) {
+        url = `http://${url}`;
+    }
+
+    const db = server.app.db;
+    const parsed_url = URL.parse(url, true);
+    const url_href = parsed_url.href;
+
+    db.history.findOne({
+        url: url_href
+    }, (err, result) => {
+        if (err || !result) {
+            errorResponse.message = `Invalid website URL: ${url_href}.`;
+            errorResponse.code = 404;
+            server.log('error', errorResponse.message);
+            return reply(errorResponse).code(errorResponse.code);
+        } else {
+            return reply(result).code(200);
+        }
+    });
+
+};
+
 let initAnalytics = (server, req, reply) => {
 
     let url = req.params.url,
@@ -18,19 +46,6 @@ let initAnalytics = (server, req, reply) => {
     const url_href = parsed_url.href;
     const url_hostname = parsed_url.hostname;
 
-    let timeout = false;
-    let unique_req = true;
-
-    setTimeout(function () {
-        timeout = true;
-    }, 300000);
-
-    db.on('error', function() {
-        server.log('error', 'Connection to the database has failed. Please make sure you have mongo running.');
-    });
-    db.on('timeout', function (err) {
-        server.log('error', 'Database connection has timed out.');
-    });
 
     db.history.findOne({
         url: url_href
@@ -44,14 +59,13 @@ let initAnalytics = (server, req, reply) => {
     });
 
     function performNewAnalysis(){
-        if (unique_req) {
-            unique_req = false;
             Request({
                 uri: url_href,
                 timeout: 20000,
                 followRedirect: true,
                 maxRedirects: 30
             }, (error, response, html) => {
+                let poll_mode = false;
 
                 if (error) {
                     if (error.code === 'ETIMEDOUT') {
@@ -82,29 +96,49 @@ let initAnalytics = (server, req, reply) => {
                     let respond = () => {
                         return reply(analytics).code(200);
                     };
-                    let replyTimeout = () => {
-                        errorResponse.message = `The URL ${url_href} timed out, please try again later.`;
-                        errorResponse.code = 504;
-                        return reply(errorResponse).code(504);
-                    };
 
-                    let updateHistory = function() {
+                    function updateHistory() {
                         analytics.links = links;
                         analytics.created_at = (new Date()).getTime();
-                        if (db && db.analyticsdb) {
+                        if (currentLinkIndex === (LINKS_LENGTH-1)) {
+                            analytics.status = 'complete';
+                        }
+                        if (db && db.history) {
+                            db.history.findAndModify({
+                                query: { url: analytics.url },
+                                update: { $set: {
+                                    links: analytics.links,
+                                    status: analytics.status,
+                                    created_at: analytics.created_at}
+                                },
+                                new: true
+                            }, function (err, doc, lastErrorObject) {
+                                if (!err && currentLinkIndex < (LINKS_LENGTH-1)) {
+                                    verifyAccessibility();
+                                } else {
+                                    server.log('info', `Analytics complete for: ${analytics.url}.`);
+                                }
+                            });
+                        }
+                    }
+
+                    function saveFirstHistory(beginPolls) {
+                        analytics.links = links;
+                        analytics.created_at = (new Date()).getTime();
+                        analytics.status = 'pending';
+                        if (db && db.history) {
                             db.history.save(analytics, (err, result) => {
                                 if (err) {
                                     server.log('error', 'Something went wrong while saving analytics to the database.');
                                 } else {
                                     server.log('info', `${analytics.url} has been successfully persisted to the database.`);
                                 }
-
-                                respond();
+                                beginPolls();
                             });
                         }
-                    };
+                    }
 
-                    let isInternalLink = (href) => {
+                    function isInternalLink(href) {
                         let matches = INTERNAL_LINK_REGEX.exec(href);
                         let isInternalLink = false;
                         if (href.indexOf(url_hostname) > 0 || (matches && matches[0]) || href.startsWith('#')) {
@@ -112,9 +146,9 @@ let initAnalytics = (server, req, reply) => {
                         }
 
                         return isInternalLink;
-                    };
+                    }
 
-                    let isExternalLink = (href) => {
+                    function isExternalLink(href) {
                         let matches = EXTERNAL_LINK_REGEX.exec(href);
                         let isExternalLink = false;
                         if (matches && matches.length > 0) {
@@ -122,9 +156,9 @@ let initAnalytics = (server, req, reply) => {
                         }
 
                         return isExternalLink;
-                    };
+                    }
 
-                    let verifyAccessibility = () => {
+                    function verifyAccessibility() {
                         let testUrl = url_href;
                         let href = websiteLinks[currentLinkIndex];
                         let matches = INTERNAL_LINK_REGEX.exec(href);
@@ -133,6 +167,8 @@ let initAnalytics = (server, req, reply) => {
                         } else {
                             testUrl = href;
                         }
+                        linksToBeVerified--;
+                        server.log('info', `Links left: ${linksToBeVerified}. Verifying URL: ${websiteLinks[currentLinkIndex]}`);
                         const options = {
                             uri: testUrl,
                             timeout: 20000,
@@ -145,46 +181,48 @@ let initAnalytics = (server, req, reply) => {
                         } else if (isExternalLink(href)) {
                             links.external++;
                         }
+                        links.verified = currentLinkIndex+1;
                         RP(options)
                             .then(function () {
-                                if (!timeout) {
-                                    validURLCallback();
-                                } else {
-                                    replyTimeout();
-                                }
+                                validURLCallback();
                             })
                             .catch(function () {
-                                if (!timeout) {
-                                    timedoutURLCallback();
-                                } else {
-                                    replyTimeout();
-                                }
+                                invalidURLCallback();
                             });
-                    };
-
-                    function checkNextLink(){
-                        if (currentLinkIndex >= (LINKS_LENGTH-1)) {
-                            updateHistory();
-                        } else {
-                            verifyAccessibility();
-                        }
                     }
 
-                    let validateLinks = () => {
+                    function validURLCallback() {
+                        links.accessible++;
+                        checkNextLink();
+                    }
+
+                    function invalidURLCallback() {
+                        links.inaccessible++;
+                        checkNextLink();
+                    }
+
+
+                    function validateLinks() {
                         linksToBeVerified = _.size(websiteLinks);
                         LINKS_LENGTH = linksToBeVerified;
                         links.external = 0;
                         links.internal = 0;
                         links.accessible = 0;
                         links.inaccessible = 0;
+                        links.verified = 0;
+                        links.total = LINKS_LENGTH;
+
                         if (linksToBeVerified > 0) {
                             verifyAccessibility();
                         } else {
-                            updateHistory();
+                            analytics.links = links;
+                            analytics.status = 'complete';
+                            analytics.created_at = (new Date()).getTime();
+                            return respond();
                         }
-                    };
+                    }
 
-                    let countHeadings = (node) => {
+                    function countHeadings(node) {
                         const headings = {};
 
                         headings.count = node.find(':header').length;
@@ -196,22 +234,23 @@ let initAnalytics = (server, req, reply) => {
                         headings.h6 = node.find('h6').length;
 
                         return headings;
-                    };
-
-                    function validURLCallback(){
-                        currentLinkIndex++;
-                        links.accessible++;
-                        linksToBeVerified--;
-                        server.log('info', `Links left: ${linksToBeVerified}. Verifying URL: ${websiteLinks[currentLinkIndex]}`);
-                        checkNextLink();
                     }
 
-                    function timedoutURLCallback(){
+                    function checkNextLink() {
                         currentLinkIndex++;
-                        links.inaccessible++;
-                        linksToBeVerified--;
-                        server.log('info', `Links left: ${linksToBeVerified}. Verifying URL: ${websiteLinks[currentLinkIndex]}`);
-                        checkNextLink();
+                        if (poll_mode) {
+                            updateHistory();
+                        } else {
+                            analytics.status = (currentLinkIndex < LINKS_LENGTH) ? 'pending': 'complete';
+                            saveFirstHistory(()=>{
+                                server.log('info', `First analytics recorded for: ${websiteLinks[currentLinkIndex]}`);
+                                respond();
+                                if (currentLinkIndex < LINKS_LENGTH) {
+                                    poll_mode = true;
+                                    verifyAccessibility();
+                                }
+                            });
+                        }
                     }
 
                     analytics.htmlVersion = 'HTML4';
@@ -235,9 +274,9 @@ let initAnalytics = (server, req, reply) => {
                     });
                 }
             });
-        }
     }
 };
 module.exports = {
-    initAnalytics: initAnalytics
+    initAnalytics: initAnalytics,
+    getUpdatedAnalytics: getUpdatedAnalytics
 };

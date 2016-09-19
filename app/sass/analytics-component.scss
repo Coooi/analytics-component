@@ -135,6 +135,21 @@
     font-size: $xxxsmall_size;
   }
 }
+.progress-bar {
+  position: relative;
+  margin: $default_margin 0;
+  .progress__label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    span {
+      font-size: $small_size;
+      color: $is-blue;
+      font-weight: $medium;
+    }
+  }
+}
 
 .render-design.ng-move,
 .render-design.ng-enter,

@@ -1,12 +1,13 @@
-var gulp, vendor, concat, uglify, jshint, config, ngAnnotate;
+let gulp, vendor, concat, uglify, jshint, config, ngAnnotate;
 
-config  = require('../config');
-gulp    = require('gulp');
-vendor  = require('gulp-concat-vendor');
-concat  = require('gulp-concat');
-uglify  = require('gulp-uglify');
-jshint  = require('gulp-jshint');
-ngAnnotate = require('gulp-ng-annotate');
+config      = require('../config');
+gulp        = require('gulp');
+vendor      = require('gulp-concat-vendor');
+concat      = require('gulp-concat');
+uglify      = require('gulp-uglify');
+jshint      = require('gulp-jshint');
+ngAnnotate  = require('gulp-ng-annotate');
+flatten     = require('gulp-flatten');
 
 gulp.task('default', function () {
     return gulp.src('src/app.js')
@@ -17,8 +18,9 @@ gulp.task('default', function () {
 
 gulp.task('concat-vendor', function() {
   gulp.src(config.vendorScripts)
-  .pipe(vendor('vendor.min.js'))
-  .pipe(gulp.dest('public/js/'));
+      .pipe(flatten())
+      .pipe(vendor('vendor.min.js'))
+      .pipe(gulp.dest('public/js/'));
 });
 
 gulp.task('uglify', function() {

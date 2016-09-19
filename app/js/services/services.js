@@ -3,13 +3,15 @@
 
     angular.module('analyticsApp')
 
-        .service('ApiService', function ($http, $q) {
+        .service('ApiService', function ($http, $rootScope, $interval, $q, $log) {
             var analytics = [],
-                ANALYTICS_ENDPOINT = '/analytics/';
+                ANALYTICS_ENDPOINT = '/analytics/',
+                POLL_ENDPOINT = 'poll/';
 
             //Services
             return {
-                getAnalyticsByURL: getAnalyticsByURL
+                getAnalyticsByURL: getAnalyticsByURL,
+                getPollsByUrl: getPollsByUrl
             };
 
             /**
@@ -40,6 +42,26 @@
                 }
 
                 return q.promise;
+            }
+
+            function getPollsByUrl(url) {
+
+                var requestURL = ANALYTICS_ENDPOINT + POLL_ENDPOINT + window.encodeURIComponent(url);
+
+                var polls = $interval(function() {
+                    return $http.get(requestURL).then(handleSuccessPollsResponse, handleErrorPollsResponse);
+                }, 4000);
+
+                function handleSuccessPollsResponse (response) {
+                    analytics = response.data;
+                    $rootScope.$broadcast('newData', { data: analytics });
+                    if (analytics.status === 'complete') {
+                        $interval.cancel(polls);
+                    }
+                }
+                function handleErrorPollsResponse (errorResponse) {
+                    $log.error(errorResponse);
+                }
             }
 
 

@@ -1,7 +1,7 @@
 'use strict';
 
-var gulp = require('gulp');
-var flatten = require('gulp-flatten');
+const gulp = require('gulp');
+const flatten = require('gulp-flatten');
 
 gulp.task('copy:html', function () {
 

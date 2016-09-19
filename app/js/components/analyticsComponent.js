@@ -1,16 +1,18 @@
-function AnalyticsController(ApiService, $log) {
-    var $ctrl = this;
+function AnalyticsController(ApiService, $log, $scope) {
+    var $ctrl = this,
+        POLL_INTERVAL = 3000;
 
     $ctrl.url = '';
     $ctrl.errorMsg = '';
-    $ctrl.showSpinner = false;
     $ctrl.analytics = {};
+    $ctrl.showSpinner = false;
+    $ctrl.progress = 0;
 
-    $ctrl.getAnalytics = function(){
+    $ctrl.beginAnalytics = function(){
         if ($ctrl.url) {
-            $ctrl.showSpinner = true;
-            $ctrl.showSpinner = true;
             $ctrl.showResults = false;
+            $ctrl.showSpinner = true;
+            $ctrl.progress = 0;
             $ctrl.errorMsg = '';
             ApiService.getAnalyticsByURL($ctrl.url).then(handleSuccess, handleError);
         }
@@ -18,8 +20,13 @@ function AnalyticsController(ApiService, $log) {
 
     function handleSuccess(analyticsResponse) {
         $ctrl.showSpinner = false;
-        $ctrl.showResults = true;
         $ctrl.analytics = analyticsResponse;
+        if ($ctrl.analytics.status === 'pending') {
+            $ctrl.progress = Math.round($ctrl.analytics.links.verified/ $ctrl.analytics.links.total * 100);
+            $ctrl.beginPolling();
+        } else {
+            $ctrl.showResults = true;
+        }
     }
     function handleError(errorResponse) {
         $ctrl.showSpinner = false;
@@ -30,6 +37,19 @@ function AnalyticsController(ApiService, $log) {
         }
         $log.debug(errorResponse);
     }
+
+    $scope.$on('newData', function(event, args) {
+        $ctrl.analytics = args.data;
+        if ($ctrl.analytics.status === 'pending') {
+            $ctrl.progress = Math.round($ctrl.analytics.links.verified/ $ctrl.analytics.links.total * 100);
+        } else {
+            $ctrl.showResults = true;
+        }
+    });
+
+    $ctrl.beginPolling = function() {
+        ApiService.getPollsByUrl($ctrl.url).then(handlePollSuccess, handlePollError);
+    };
 
 }
 

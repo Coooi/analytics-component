@@ -18,6 +18,13 @@ const DB_URI =
 
 server.app.db = mongojs(DB_URI, ['history']);
 
+server.app.db.on('error', function() {
+    server.log('error', 'Connection to the database has failed. Please make sure you have mongo running.');
+});
+server.app.db.on('timeout', function (err) {
+    server.log('error', 'Database connection has timed out.');
+});
+
 server.register(require('inert'), (err) => {
 
     if (err) {
@@ -37,14 +44,17 @@ server.register(require('inert'), (err) => {
 server.route({
     method: 'GET',
     path: '/analytics/{url}',
-    config: {
-        timeout: {
-            server: 330000,
-            socket: 330001
-        }
-    },
     handler: (req, reply) => {
         analytics.initAnalytics(server, req, reply);
+    }
+});
+
+//analyticsRoute
+server.route({
+    method: 'GET',
+    path: '/analytics/poll/{url}',
+    handler: (req, reply) => {
+        analytics.getUpdatedAnalytics(server, req, reply);
     }
 });
 

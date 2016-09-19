@@ -5,12 +5,32 @@
                 <label for="search-input">http://
                     <input type="text" name="search-input" class="is-input" ng-model="$ctrl.url" placeholder="Type a website URL" required>
                 </label>
-                <button class="is-btn is-btn--search" ng-click="$ctrl.getAnalytics()">Analyse</button>
+                <button class="is-btn is-btn--search" ng-click="$ctrl.beginAnalytics()">Analyse</button>
             </form>
         </div>
         <div class="spinner" ng-if="$ctrl.showSpinner">
             <div class="cube1"></div>
             <div class="cube2"></div>
+        </div>
+        <div class="progress-bar" ng-if="$ctrl.analytics.status === 'pending'">
+            <round-progress
+                    max="$ctrl.analytics.links.total"
+                    current="$ctrl.analytics.links.verified"
+                    color="#ff7500"
+                    bgcolor="rgba(0, 52, 104, 0.1)"
+                    radius="100"
+                    stroke="20"
+                    semi="false"
+                    rounded="true"
+                    clockwise="false"
+                    responsive="false"
+                    duration="800"
+                    animation="easeInOutQuart"
+                    animation-delay="0">
+            </round-progress>
+                <div class="progress__label">
+                    <span>{{$ctrl.progress}}%</span>
+                </div>
         </div>
         <div class="error-box" ng-if="$ctrl.errorMsg">
             <p>{{$ctrl.errorMsg}}</p>

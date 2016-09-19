@@ -1,6 +1,8 @@
 (function(){
     'use strict';
-    var AppDependencies = ['ngAnimate'];
+    var AppDependencies = [
+        'angular-svg-round-progressbar'
+    ];
 
     angular
         .module('analyticsApp', AppDependencies)

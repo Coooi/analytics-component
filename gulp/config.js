@@ -14,7 +14,7 @@ module.exports = {
     vendorMapScripts: 'bower_components/angular/angular.min.js.map',
     vendorScripts: [
         'bower_components/angular/angular.min.js',
-        'bower_components/angular-animate/angular-animate.min.js',
+        'bower_components/angular-svg-round-progressbar/build/roundProgress.min.js',
         'node_modules/lodash/lodash.min.js'
     ],
     distCSS: 'public/css/'
