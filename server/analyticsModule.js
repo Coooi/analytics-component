@@ -48,7 +48,7 @@ let initAnalytics = (server, req, reply) => {
             unique_req = false;
             Request({
                 uri: url_href,
-                timeout: 30000,
+                timeout: 20000,
                 followRedirect: true,
                 maxRedirects: 30
             }, (error, response, html) => {
