@@ -48,7 +48,7 @@ function AnalyticsController(ApiService, $log, $scope) {
     });
 
     $ctrl.beginPolling = function() {
-        ApiService.getPollsByUrl($ctrl.url).then(handlePollSuccess, handlePollError);
+        ApiService.getPollsByUrl($ctrl.url);
     };
 
 }

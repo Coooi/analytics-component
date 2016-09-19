@@ -100,9 +100,7 @@ let initAnalytics = (server, req, reply) => {
                     function updateHistory() {
                         analytics.links = links;
                         analytics.created_at = (new Date()).getTime();
-                        if (currentLinkIndex === (LINKS_LENGTH-1)) {
-                            analytics.status = 'complete';
-                        }
+                        analytics.status = (currentLinkIndex < (LINKS_LENGTH-1)) ? 'pending': 'complete';
                         if (db && db.history) {
                             db.history.findAndModify({
                                 query: { url: analytics.url },
@@ -125,7 +123,7 @@ let initAnalytics = (server, req, reply) => {
                     function saveFirstHistory(beginPolls) {
                         analytics.links = links;
                         analytics.created_at = (new Date()).getTime();
-                        analytics.status = 'pending';
+                        analytics.status = (currentLinkIndex < LINKS_LENGTH) ? 'pending': 'complete';
                         if (db && db.history) {
                             db.history.save(analytics, (err, result) => {
                                 if (err) {

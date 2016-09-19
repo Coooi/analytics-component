@@ -150,6 +150,13 @@
     }
   }
 }
+.progress-status {
+  span {
+    font-size: $body_size;
+    color: $is-blue;
+    font-weight: $medium;
+  }
+}
 
 .render-design.ng-move,
 .render-design.ng-enter,

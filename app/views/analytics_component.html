@@ -28,9 +28,12 @@
                     animation="easeInOutQuart"
                     animation-delay="0">
             </round-progress>
-                <div class="progress__label">
-                    <span>{{$ctrl.progress}}%</span>
-                </div>
+            <div class="progress__label">
+                <span>{{$ctrl.progress}}%</span>
+            </div>
+        </div>
+        <div class="progress-status" ng-if="$ctrl.analytics.status === 'pending'">
+            <span>Validating Links</span>
         </div>
         <div class="error-box" ng-if="$ctrl.errorMsg">
             <p>{{$ctrl.errorMsg}}</p>

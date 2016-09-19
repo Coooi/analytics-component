@@ -5,7 +5,7 @@
 
 ### About ###
 Responsive designs analytics component built with AngularJS.
-Based on an URL typed by the user, the system will read the page an return an analysis on the screen.
+Based on an URL typed by the user, the system will read the page an return the analytic results on the screen.
 The system will track a history of each search in the mongo database.
 
 ### Result Criterias ###
@@ -26,7 +26,7 @@ The system will track a history of each search in the mongo database.
 
 
 ### Working URL ###
-
+https://s24-analytics.herokuapp.com
 
 ### Installation ###
 
@@ -61,9 +61,9 @@ gulp run
 
 ### Notes ###
 
-* No unit tests included.
-* The timeout of each request is 5 minutes.
+* The timeout of each request is 30 seconds.
 * The timeout of each link validation is 20 seconds.
+* Every request to the server will happen from 3 to 3 seconds.
 
 ### Contact ###
 
