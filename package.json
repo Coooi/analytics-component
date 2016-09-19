@@ -16,7 +16,7 @@
     "scout24 analytics spa"
   ],
   "author": "Marco Nascimento",
-  "license": "scout24",
+  "license": "MIT",
   "dependencies": {
     "bootstrap-grid": "^2.0.1",
     "bower": "^1.7.7",

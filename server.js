@@ -6,7 +6,9 @@ const server    = new Hapi.Server();
 const analytics = require('./server/analyticsModule');
 const mongojs   = require('mongojs');
 
-server.connection({port: 3000});
+const PORT = process.env.PORT || 3000;
+
+server.connection({port: PORT});
 
 //DB Connection
 const DB_URI =
